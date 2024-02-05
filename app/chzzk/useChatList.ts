@@ -40,10 +40,10 @@ export default function useChatList(
     const color =
       profile.title?.color ??
       nicknameColors[
-        `${profile.userIdHash}${chzzkChat.cid}`
-          .split('')
-          .map((c) => c.charCodeAt(0))
-          .reduce((a, b) => a + b, 0) % nicknameColors.length
+      `${profile.userIdHash}${chzzkChat.cid}`
+        .split('')
+        .map((c) => c.charCodeAt(0))
+        .reduce((a, b) => a + b, 0) % nicknameColors.length
       ];
     const emojis = typeof extras.emojis !== 'string' ? extras.emojis : {};
     const message = chzzkChat.msg || '';
@@ -51,6 +51,7 @@ export default function useChatList(
 
     return {
       chat: {
+        platform: "chzzk",
         uid: Math.random().toString(36).substring(2, 12),
         time: chzzkChat.msgTime,
         userId: profile.userIdHash,
@@ -60,11 +61,11 @@ export default function useChatList(
         emojis,
         message: match
           ? message
-              .split(emojiRegex)
-              .map((part, i): MessagePart[] =>
-                i % 2 == 0 ? splitWithSpace(part) : [{ type: 'emoji', emojiKey: part }],
-              )
-              .flat()
+            .split(emojiRegex)
+            .map((part, i): MessagePart[] =>
+              i % 2 == 0 ? splitWithSpace(part) : [{ type: 'emoji', emojiKey: part }],
+            )
+            .flat()
           : splitWithSpace(message),
       },
       payAmount: extras.payAmount,
@@ -73,7 +74,7 @@ export default function useChatList(
 
   const connectChzzk = useCallback(() => {
     if (chatChannelId == null || accessToken == null) {
-      return () => {};
+      return () => { };
     }
 
     const ws = new WebSocket('wss://kr-ss1.chat.naver.com/chat');

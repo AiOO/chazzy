@@ -16,6 +16,7 @@ export interface StickerMessagePart {
 export type MessagePart = TextMessagePart | EmojiMessagePart | StickerMessagePart;
 
 export interface Chat {
+  platform: string;
   uid: string;
   time: number;
   userId: string;
