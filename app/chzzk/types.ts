@@ -65,8 +65,8 @@ export interface Badge {
   badgeNo?: number;
   badgeId?: string;
   imageUrl: string;
-  title: string;
-  description: string;
+  title?: string;
+  description?: string;
   activated?: boolean;
 }
 
@@ -74,8 +74,15 @@ export interface RealTimeDonationRanking {
   badge: Badge;
 }
 
+export interface Subscription {
+  accumulativeMonth: number;
+  tier: number;
+  badge: Badge;
+}
+
 export interface StreamingProperty {
   realTimeDonationRanking?: RealTimeDonationRanking;
+  subscription?: Subscription;
 }
 
 export interface Title {

@@ -79,6 +79,7 @@ div#chat-list-container > div.chat-row > span.message > a:hover {
 div#chat-list-container > div.chat-row > span.message > img.emoji {
   height: calc(var(--font-size) * 1.5);
   vertical-align: top;
+  margin-right: 1px;
 }
 
 div#chat-list-container > div.chat-row > span.message > img.sticker {
@@ -178,6 +179,7 @@ div#cheese-chat-list-container > div.cheese-chat-row > div.content > span.messag
 div#cheese-chat-list-container > div.cheese-chat-row > div.content > span.message > img.emoji {
   height: 1.25em;
   vertical-align: top;
+  margin-right: 1px;
 }
 
 div#cheese-chat-list-container > div.cheese-chat-row > div.footer {
