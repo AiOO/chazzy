@@ -227,7 +227,10 @@ export default function Chazzy(props: ChazzyProps): ReactElement {
             <Status
               provider="chzzk"
               channelName={chzzkChannel.channelName}
-              channelImageUrl={chzzkChannel.channelImageUrl}
+              channelImageUrl={
+                chzzkChannel.channelImageUrl ??
+                'https://ssl.pstatic.net/cmstatic/nng/img/img_anonymous_square_gray_opacity2x.png?type=f120_120_na'
+              }
               concurrentUserCount={chzzkLiveStatus?.concurrentUserCount}
               liveCategoryValue={chzzkLiveStatus?.liveCategoryValue}
               isLive={chzzkLiveStatus?.status === 'OPEN'}

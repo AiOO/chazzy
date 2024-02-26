@@ -1,7 +1,7 @@
 export interface Channel {
   channelId: string;
   channelName: string;
-  channelImageUrl: string;
+  channelImageUrl?: string;
   verifiedMark: boolean;
   channelType: string;
   channelDescription: string;
