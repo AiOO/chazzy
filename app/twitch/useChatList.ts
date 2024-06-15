@@ -88,6 +88,7 @@ export default function useChatList(
       });
 
       return {
+        platform: "twitch",
         uid: tags['id'],
         time: parseInt(tags['tmi-sent-ts']),
         userId: tags['user-id'],
@@ -137,7 +138,7 @@ export default function useChatList(
 
   const connectTwitch = useCallback(() => {
     if (channelId == null || broadcasterId == null) {
-      return () => {};
+      return () => { };
     }
 
     const ws = new WebSocket('wss://irc-ws.chat.twitch.tv');
