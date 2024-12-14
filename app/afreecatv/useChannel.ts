@@ -11,7 +11,7 @@ export default function useChannel(channelId: string | undefined, broadNo: strin
     void (async () => {
       await fetch(
         // Use proxy API backend
-        `https://live.afreecatv.com.proxy.aioo.ooo/afreeca/player_live_api.php?bjid=${channelId}`,
+        `https://live.sooplive.co.kr.proxy.aioo.ooo/afreeca/player_live_api.php?bjid=${channelId}`,
         {
           method: 'POST',
           headers: {

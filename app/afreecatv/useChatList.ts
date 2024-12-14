@@ -64,7 +64,7 @@ export default function useChatList(channel: Channel | undefined) {
       ...Object.fromEntries(
         emoticons.map(({ title, pc_img }) => [
           title,
-          `https://static.file.afreecatv.com/signature_emoticon/${BJID}/${pc_img}`,
+          `https://static.file.sooplive.co.kr/signature_emoticon/${BJID}/${pc_img}`,
         ]),
       ),
     }),
@@ -85,14 +85,14 @@ export default function useChatList(channel: Channel | undefined) {
         nickname: afreecatvMessage[6],
         badges: [
           subscriptionMonths !== -1 ? personalSubscriptionBadge : null,
-          isManager ? 'https://res.afreecatv.com/images/new_app/chat/ic_manager.gif' : null,
-          !isManager && isTopFan ? 'https://res.afreecatv.com/images/new_app/chat/ic_hot.gif' : null,
+          isManager ? 'https://res.sooplive.co.kr/images/new_app/chat/ic_manager.gif' : null,
+          !isManager && isTopFan ? 'https://res.sooplive.co.kr/images/new_app/chat/ic_hot.gif' : null,
           !isManager && subscriptionMonths !== -1 && personalSubscriptionBadge == null
-            ? 'https://res.afreecatv.com/images/new_app/chat/ic_gudok.gif'
+            ? 'https://res.sooplive.co.kr/images/new_app/chat/ic_gudok.gif'
             : null,
-          !isManager && !isTopFan && isFan ? 'https://res.afreecatv.com/images/new_app/chat/ic_fanclub.gif' : null,
-          !isManager && isSupporter ? 'https://res.afreecatv.com/images/new_app/chat/ic_support.gif' : null,
-          !isManager && isQuickView ? 'https://res.afreecatv.com/images/new_app/chat/ic_quick.gif' : null,
+          !isManager && !isTopFan && isFan ? 'https://res.sooplive.co.kr/images/new_app/chat/ic_fanclub.gif' : null,
+          !isManager && isSupporter ? 'https://res.sooplive.co.kr/images/new_app/chat/ic_support.gif' : null,
+          !isManager && isQuickView ? 'https://res.sooplive.co.kr/images/new_app/chat/ic_quick.gif' : null,
         ].filter((badge) => badge != null),
         color: '#929292',
         emojis,
@@ -126,21 +126,21 @@ export default function useChatList(channel: Channel | undefined) {
         nickname: afreecatvMessage[7],
         badges: [
           subscriptionMonths !== -1 ? personalSubscriptionBadge : null,
-          isManager ? 'https://res.afreecatv.com/images/new_app/chat/ic_manager.gif' : null,
-          !isManager && isTopFan ? 'https://res.afreecatv.com/images/new_app/chat/ic_hot.gif' : null,
+          isManager ? 'https://res.sooplive.co.kr/images/new_app/chat/ic_manager.gif' : null,
+          !isManager && isTopFan ? 'https://res.sooplive.co.kr/images/new_app/chat/ic_hot.gif' : null,
           !isManager && subscriptionMonths !== -1 && personalSubscriptionBadge == null
-            ? 'https://res.afreecatv.com/images/new_app/chat/ic_gudok.gif'
+            ? 'https://res.sooplive.co.kr/images/new_app/chat/ic_gudok.gif'
             : null,
-          !isManager && !isTopFan && isFan ? 'https://res.afreecatv.com/images/new_app/chat/ic_fanclub.gif' : null,
-          !isManager && isSupporter ? 'https://res.afreecatv.com/images/new_app/chat/ic_support.gif' : null,
-          !isManager && isQuickView ? 'https://res.afreecatv.com/images/new_app/chat/ic_quick.gif' : null,
+          !isManager && !isTopFan && isFan ? 'https://res.sooplive.co.kr/images/new_app/chat/ic_fanclub.gif' : null,
+          !isManager && isSupporter ? 'https://res.sooplive.co.kr/images/new_app/chat/ic_support.gif' : null,
+          !isManager && isQuickView ? 'https://res.sooplive.co.kr/images/new_app/chat/ic_quick.gif' : null,
         ].filter((badge) => badge != null),
         color: '#929292',
         emojis,
         message: [
           {
             type: 'sticker',
-            url: `https://ogq-sticker-global-cdn-z01.afreecatv.com/sticker/${stickerId}/${stickerSubId}_40.${stickerExtension}?ver=${stickerVersion}`,
+            url: `https://ogq-sticker-global-cdn-z01.sooplive.co.kr/sticker/${stickerId}/${stickerSubId}_40.${stickerExtension}?ver=${stickerVersion}`,
           },
         ],
         isItalic: false,
@@ -154,7 +154,7 @@ export default function useChatList(channel: Channel | undefined) {
       return () => {};
     }
 
-    const ws = new WebSocket(webSocketUrl);
+    const ws = new WebSocket(webSocketUrl, ['chat']);
     ws.binaryType = 'arraybuffer';
 
     const worker = new Worker(

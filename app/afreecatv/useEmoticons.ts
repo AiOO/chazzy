@@ -10,7 +10,7 @@ export default function useEmoticons(channelId: string | undefined) {
     }
     void (async () => {
       await fetch(
-        `https://live.afreecatv.com/api/signature_emoticon_api.php?szCallBack=hello&work=list&szBjId=${channelId}&_=${new Date().getTime()}`,
+        `https://live.sooplive.co.kr/api/signature_emoticon_api.php?szCallBack=hello&work=list&szBjId=${channelId}&_=${new Date().getTime()}`,
       )
         .then((response) => response.text())
         .then((data) => {
