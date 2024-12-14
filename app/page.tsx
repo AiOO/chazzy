@@ -1,19 +1,62 @@
 export default function Home() {
   return (
-    <main style={{ color: 'black' }}>
+    <main style={{ color: 'black', paddingLeft: '1rem', paddingRight: '1rem' }}>
       <h1>Chazzy</h1>
       <p>
-        채팅창 및 도네이션을 보기 쉽게 확인할 수 있는 페이지입니다.
+        스트리머의 치지직, 트위치, 숲(구 아프리카TV) ID를 조합하여 다음과 같은 주소를 만들어 웹 브라우저로 접속합니다.
         <br />
-        다른 스트리머 분들도 뒤에 주소만 바꾸면 사용이 가능합니다.
+        각각의 ID는 생략할 수 있으며, 생략한 경우 해당 플랫폼의 채팅 및 기능은 노출되지 않습니다.
       </p>
-      <h3>예시</h3>
       <p>
-        녹두로님 치지직 주소: https://chzzk.naver.com/6e06f5e1907f17eff543abd06cb62891
+        https://chazzy.vercel.app/{'{치지직 ID}'}-{'{트위치 ID}'}-{'{숲 ID}'}
+      </p>
+      <h2>사용 방법 상세 안내</h2>
+      <p>(예시 주소는 각각 치지직, 트위치, 숲의 공식 계정입니다.)</p>
+      <p>
+        만약 스트리머의 치지직 주소가 다음과 같고:
         <br />
-        녹두로님 Twitch 주소: https://www.twitch.tv/nokduro
+        https://chzzk.naver.com/c42cd75ec4855a9edf204a407c3c1dd2
+      </p>
+      <p>
+        스트리머의 트위치 주소가 다음과 같고:
         <br />
-        Chazzy 주소: https://chazzy.vercel.app/6e06f5e1907f17eff543abd06cb62891-nokduro
+        https://www.twitch.tv/twitch
+      </p>
+      <p>
+        스트리머의 숲 주소가 다음과 같다면:
+        <br />
+        https://ch.sooplive.co.kr/afreecapd
+      </p>
+      <p>
+        → Chazzy 주소는 다음과 같습니다:
+        <br />
+        https://chazzy.vercel.app/c42cd75ec4855a9edf204a407c3c1dd2-twitch-afreecapd
+      </p>
+      <h3>원하는 플랫폼만 사용하기</h3>
+      <p>
+        일부 플랫폼만 사용하시는 경우 사용하지 않는 플랫폼 ID를 생략할 수 있습니다. 다만 플랫폼 ID 구분을 위한 -는
+        여전히 남아있는 것에 유의해주세요.
+      </p>
+      <p>
+        → 치지직과 트위치만 사용 시 Chazzy 주소:
+        <br />
+        https://chazzy.vercel.app/c42cd75ec4855a9edf204a407c3c1dd2-twitch-
+      </p>
+      <p>
+        → 트위치와 숲만 사용 시 Chazzy 주소:
+        <br />
+        https://chazzy.vercel.app/-twitch-afreecapd
+      </p>
+      <p>
+        → 치지직만 사용 시 Chazzy 주소:
+        <br />
+        https://chazzy.vercel.app/c42cd75ec4855a9edf204a407c3c1dd2--
+      </p>
+      <hr />
+      <p>
+        Chazzy와 관련한 자세한 내용은 다음 링크를 참고하세요.
+        <br />
+        <a href="https://blog.aioo.ooo/chazzy/">https://blog.aioo.ooo/chazzy/</a>
       </p>
     </main>
   );
