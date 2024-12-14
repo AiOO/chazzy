@@ -1181,3 +1181,26 @@ export const emojis = Object.fromEntries([
     makeEmojiUrl(pc),
   ]),
 ]);
+
+export const nicknameColors = [
+  '#E04949',
+  '#CD5D5D',
+  '#DB6743',
+  '#CF8362',
+  '#D39750',
+  '#C4A557',
+  '#97A65B',
+  '#36A624',
+  '#63B566',
+  '#45A48D',
+  '#58A6B7',
+  '#6CABCF',
+  '#288ED8',
+  '#5C82E3',
+  '#6F6DD6',
+  '#9568CD',
+  '#B477CA',
+  '#D15ED3',
+  '#CF5F9B',
+  '#C279A1',
+];

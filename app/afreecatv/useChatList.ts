@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Chat, MessagePart, TextMessagePart } from '../chat/types';
-import { emojis as defaultEmojis } from './constants';
+import { emojis as defaultEmojis, nicknameColors } from './constants';
 import parseMessage from './parser/parseMessage';
 import { Channel } from './types';
 import useEmoticons from './useEmoticons';
@@ -78,10 +78,18 @@ export default function useChatList(channel: Channel | undefined) {
       const match = message.match(emojiRegex);
       const subscriptionMonths = parseInt(afreecatvMessage[8]);
       const personalSubscriptionBadge = PCON_OBJECT.findLast(({ MONTH }) => subscriptionMonths > MONTH)?.FILENAME;
+      const userId = afreecatvMessage[2];
+      const color =
+        nicknameColors[
+          userId
+            .split('')
+            .map((c) => c.charCodeAt(0))
+            .reduce((a, b) => a + b, 0) % nicknameColors.length
+        ];
       return {
-        uid: `${afreecatvMessage[2]}-${new Date().getTime()}`,
+        uid: `${userId}-${new Date().getTime()}`,
         time: new Date().getTime(),
-        userId: afreecatvMessage[2],
+        userId,
         nickname: afreecatvMessage[6],
         badges: [
           subscriptionMonths !== -1 ? personalSubscriptionBadge : null,
@@ -94,7 +102,7 @@ export default function useChatList(channel: Channel | undefined) {
           !isManager && isSupporter ? 'https://res.sooplive.co.kr/images/new_app/chat/ic_support.gif' : null,
           !isManager && isQuickView ? 'https://res.sooplive.co.kr/images/new_app/chat/ic_quick.gif' : null,
         ].filter((badge) => badge != null),
-        color: '#929292',
+        color,
         emojis,
         message: match
           ? message
@@ -119,10 +127,18 @@ export default function useChatList(channel: Channel | undefined) {
       const stickerExtension = afreecatvMessage[12];
       const subscriptionMonths = parseInt(afreecatvMessage[13]);
       const personalSubscriptionBadge = PCON_OBJECT.findLast(({ MONTH }) => subscriptionMonths > MONTH)?.FILENAME;
+      const userId = afreecatvMessage[6];
+      const color =
+        nicknameColors[
+          userId
+            .split('')
+            .map((c) => c.charCodeAt(0))
+            .reduce((a, b) => a + b, 0) % nicknameColors.length
+        ];
       return {
-        uid: `${afreecatvMessage[6]}-${new Date().getTime()}`,
+        uid: `${userId}-${new Date().getTime()}`,
         time: new Date().getTime(),
-        userId: afreecatvMessage[6],
+        userId,
         nickname: afreecatvMessage[7],
         badges: [
           subscriptionMonths !== -1 ? personalSubscriptionBadge : null,
@@ -135,7 +151,7 @@ export default function useChatList(channel: Channel | undefined) {
           !isManager && isSupporter ? 'https://res.sooplive.co.kr/images/new_app/chat/ic_support.gif' : null,
           !isManager && isQuickView ? 'https://res.sooplive.co.kr/images/new_app/chat/ic_quick.gif' : null,
         ].filter((badge) => badge != null),
-        color: '#929292',
+        color,
         emojis,
         message: [
           {
