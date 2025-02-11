@@ -2,6 +2,8 @@ import { Fragment, memo } from 'react';
 import urlRegexSafe from 'url-regex-safe';
 import { Chat } from '../chat/types';
 
+const newLineRegex = /(\n)/;
+
 function ChatRow(props: Chat) {
   const { time, nickname, badges, color, emojis, message, isItalic, deletionReason } = props;
   const timestamp = (() => {
@@ -22,13 +24,21 @@ function ChatRow(props: Chat) {
           : message.map((part, i) => (
               <Fragment key={i}>
                 {part.type === 'text' ? (
-                  (urlRegexSafe as (options: { exact: boolean }) => RegExp)({ exact: true }).test(part.text) ? (
-                    <a href={part.text.startsWith('http') ? part.text : `https://${part.text}`} target="_blank">
-                      {part.text}
-                    </a>
-                  ) : (
-                    <>{part.text}</>
-                  )
+                  part.text.split(newLineRegex).map((line, index) => (
+                    <Fragment key={index}>
+                      {index % 2 === 0 ? (
+                        (urlRegexSafe as (options: { exact: boolean }) => RegExp)({ exact: true }).test(line) ? (
+                          <a href={line.startsWith('http') ? line : `https://${line}`} target="_blank">
+                            {line}
+                          </a>
+                        ) : (
+                          line
+                        )
+                      ) : (
+                        <br />
+                      )}
+                    </Fragment>
+                  ))
                 ) : part.type === 'emoji' ? (
                   <img className="emoji" alt={part.emojiKey} src={emojis[part.emojiKey]} />
                 ) : (

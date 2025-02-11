@@ -7,8 +7,6 @@ import useEmoticons from './useEmoticons';
 
 const INTERNAL_MAX_LENGTH = 10000;
 
-const emojiRegex = /\/([^/]+)\//;
-
 function splitWithSpace(message: string): TextMessagePart[] {
   return message
     .split(/([^ ]+)/)
@@ -31,6 +29,9 @@ function parseFlag(flag: string) {
     isFollower: (flag1Number & (1 << 28)) === 1 << 28,
     isEmployee: (flag2Number & (1 << 10)) === 1 << 10,
     isCleanAti: (flag2Number & (1 << 11)) === 1 << 11,
+    isTier1Follower: (flag2Number & (1 << 18)) === 1 << 18,
+    isTier2Follower: (flag2Number & (1 << 19)) === 1 << 19,
+    isTier3Follower: (flag2Number & (1 << 20)) === 1 << 20,
   };
 }
 
@@ -71,13 +72,35 @@ export default function useChatList(channel: Channel | undefined) {
     [emoticons],
   );
 
+  const emojiRegex = useMemo(() => new RegExp(`/(${Object.keys(emojis).join('|')})/`), [emojis]);
+
   const convertChat = useCallback(
     (afreecatvMessage: string[]): Chat => {
-      const { isFan, isManager, isTopFan, isQuickView, isSupporter } = parseFlag(afreecatvMessage[7]);
+      const { isFan, isManager, isTopFan, isTier1Follower, isTier2Follower, isTier3Follower } = parseFlag(
+        afreecatvMessage[7],
+      );
       const message = afreecatvMessage[1];
       const match = message.match(emojiRegex);
       const subscriptionMonths = parseInt(afreecatvMessage[8]);
-      const personalSubscriptionBadge = PCON_OBJECT.findLast(({ MONTH }) => subscriptionMonths > MONTH)?.FILENAME;
+      const personalSubscriptionBadges =
+        (() => {
+          if (PCON_OBJECT == null) {
+            return [];
+          }
+          if (isTier1Follower) {
+            return PCON_OBJECT.tier1;
+          }
+          if (isTier2Follower) {
+            return PCON_OBJECT.tier2;
+          }
+          if (isTier3Follower) {
+            return PCON_OBJECT.tier3;
+          }
+          return [];
+        })() ?? [];
+      const personalSubscriptionBadge = personalSubscriptionBadges.findLast(
+        ({ MONTH }) => subscriptionMonths >= MONTH,
+      )?.FILENAME;
       const userId = afreecatvMessage[2];
       const color =
         nicknameColors[
@@ -93,14 +116,14 @@ export default function useChatList(channel: Channel | undefined) {
         nickname: afreecatvMessage[6],
         badges: [
           subscriptionMonths !== -1 ? personalSubscriptionBadge : null,
-          isManager ? 'https://res.sooplive.co.kr/images/new_app/chat/ic_manager.gif' : null,
-          !isManager && isTopFan ? 'https://res.sooplive.co.kr/images/new_app/chat/ic_hot.gif' : null,
+          isManager ? '/afreecatv/ic_manager.svg' : null,
+          !isManager && isTopFan ? '/afreecatv/ic_hot.svg' : null,
           !isManager && subscriptionMonths !== -1 && personalSubscriptionBadge == null
-            ? 'https://res.sooplive.co.kr/images/new_app/chat/ic_gudok.gif'
+            ? isTier1Follower
+              ? '/afreecatv/ic_gudok.svg'
+              : '/afreecatv/ic_gudok_tier_2.svg'
             : null,
-          !isManager && !isTopFan && isFan ? 'https://res.sooplive.co.kr/images/new_app/chat/ic_fanclub.gif' : null,
-          !isManager && isSupporter ? 'https://res.sooplive.co.kr/images/new_app/chat/ic_support.gif' : null,
-          !isManager && isQuickView ? 'https://res.sooplive.co.kr/images/new_app/chat/ic_quick.gif' : null,
+          !isManager && !isTopFan && isFan ? '/afreecatv/ic_fanclub.svg' : null,
         ].filter((badge) => badge != null),
         color,
         emojis,
@@ -120,13 +143,33 @@ export default function useChatList(channel: Channel | undefined) {
 
   const convertStickerChat = useCallback(
     (afreecatvMessage: string[]): Chat => {
-      const { isFan, isManager, isTopFan, isQuickView, isSupporter } = parseFlag(afreecatvMessage[8]);
+      const { isFan, isManager, isTopFan, isTier1Follower, isTier2Follower, isTier3Follower } = parseFlag(
+        afreecatvMessage[8],
+      );
       const stickerId = afreecatvMessage[3];
       const stickerSubId = afreecatvMessage[4];
       const stickerVersion = afreecatvMessage[5];
       const stickerExtension = afreecatvMessage[12];
       const subscriptionMonths = parseInt(afreecatvMessage[13]);
-      const personalSubscriptionBadge = PCON_OBJECT.findLast(({ MONTH }) => subscriptionMonths > MONTH)?.FILENAME;
+      const personalSubscriptionBadges =
+        (() => {
+          if (PCON_OBJECT == null) {
+            return [];
+          }
+          if (isTier1Follower) {
+            return PCON_OBJECT.tier1;
+          }
+          if (isTier2Follower) {
+            return PCON_OBJECT.tier2;
+          }
+          if (isTier3Follower) {
+            return PCON_OBJECT.tier3;
+          }
+          return [];
+        })() ?? [];
+      const personalSubscriptionBadge = personalSubscriptionBadges.findLast(
+        ({ MONTH }) => subscriptionMonths >= MONTH,
+      )?.FILENAME;
       const userId = afreecatvMessage[6];
       const color =
         nicknameColors[
@@ -142,21 +185,21 @@ export default function useChatList(channel: Channel | undefined) {
         nickname: afreecatvMessage[7],
         badges: [
           subscriptionMonths !== -1 ? personalSubscriptionBadge : null,
-          isManager ? 'https://res.sooplive.co.kr/images/new_app/chat/ic_manager.gif' : null,
-          !isManager && isTopFan ? 'https://res.sooplive.co.kr/images/new_app/chat/ic_hot.gif' : null,
+          isManager ? '/afreecatv/ic_manager.svg' : null,
+          !isManager && isTopFan ? '/afreecatv/ic_hot.svg' : null,
           !isManager && subscriptionMonths !== -1 && personalSubscriptionBadge == null
-            ? 'https://res.sooplive.co.kr/images/new_app/chat/ic_gudok.gif'
+            ? isTier1Follower
+              ? '/afreecatv/ic_gudok.svg'
+              : '/afreecatv/ic_gudok_tier_2.svg'
             : null,
-          !isManager && !isTopFan && isFan ? 'https://res.sooplive.co.kr/images/new_app/chat/ic_fanclub.gif' : null,
-          !isManager && isSupporter ? 'https://res.sooplive.co.kr/images/new_app/chat/ic_support.gif' : null,
-          !isManager && isQuickView ? 'https://res.sooplive.co.kr/images/new_app/chat/ic_quick.gif' : null,
+          !isManager && !isTopFan && isFan ? '/afreecatv/ic_fanclub.svg' : null,
         ].filter((badge) => badge != null),
         color,
         emojis,
         message: [
           {
             type: 'sticker',
-            url: `https://ogq-sticker-global-cdn-z01.sooplive.co.kr/sticker/${stickerId}/${stickerSubId}_40.${stickerExtension}?ver=${stickerVersion}`,
+            url: `https://ogq-sticker-global-cdn-z01.sooplive.co.kr/sticker/${stickerId}/${stickerSubId}_80.${stickerExtension}?ver=${stickerVersion}`,
           },
         ],
         isItalic: false,

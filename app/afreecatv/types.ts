@@ -107,6 +107,11 @@ export interface StationResponse {
   };
 }
 
+export interface Personalcon {
+  MONTH: number;
+  FILENAME: string;
+}
+
 export interface Channel {
   AUTO_HASHTAGS: unknown[];
   BJAWARD: boolean;
@@ -162,10 +167,7 @@ export interface Channel {
   PBNO: string;
   PCON: number;
   PCON_MONTH: string[];
-  PCON_OBJECT: {
-    MONTH: number;
-    FILENAME: string;
-  }[];
+  PCON_OBJECT: Record<'tier1' | 'tier2' | 'tier3', Personalcon[] | undefined> | null;
   PCON_TIME: number;
   PLAYBACKRATEDELTA: string;
   PLAYTIMINGBUFFER_DURATION: string;
