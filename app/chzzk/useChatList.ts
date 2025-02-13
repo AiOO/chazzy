@@ -168,6 +168,12 @@ export default function useChatList(
                 if (chat.msgTypeCode !== MessageTypeCode.CHAT && chat.msgTypeCode !== MessageTypeCode.CHEESE_CHAT) {
                   return false;
                 }
+                if (
+                  chat.msgTypeCode === MessageTypeCode.CHEESE_CHAT &&
+                  (JSON.parse(chat.extras) as unknown)?.['donationType'] !== 'CHAT'
+                ) {
+                  return false;
+                }
                 return true;
               })
               .map((chzzkChat) => {
