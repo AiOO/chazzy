@@ -127,6 +127,11 @@ div#cheese-chat-list-container > div.cheese-chat-row {
   animation: 20s linear fadeout;
 }
 
+div#cheese-chat-list-container>div.cheese-chat-row.tier0 {
+  background: linear-gradient(270deg, rgba(0, 0, 0, 0.2), transparent),
+    linear-gradient(180deg, hsla(0, 0%, 100%, 0.1), hsla(0, 0%, 100%, 0)), rgba(105, 113, 131, 1);
+}
+
 div#cheese-chat-list-container > div.cheese-chat-row.tier1 {
   background: linear-gradient(270deg, rgba(0, 0, 0, 0.2), transparent),
     linear-gradient(180deg, hsla(0, 0%, 100%, 0.1), hsla(0, 0%, 100%, 0)), rgba(65, 39, 118, 1);

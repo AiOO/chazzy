@@ -35,14 +35,10 @@ export default function useChatList(
     }) as Profile;
     const extras = JSON.parse(chzzkChat.extras) as Extras;
     const nickname = profile.nickname;
-    const badge = profile.badge?.imageUrl;
     const subscriptionBadge = profile.streamingProperty?.subscription?.badge.imageUrl;
-    const donationBadge = profile.streamingProperty?.realTimeDonationRanking?.badge.imageUrl;
-    const badges = [badge, subscriptionBadge, donationBadge]
-      .concat(
-        profile.activityBadges?.filter((badge) => badge?.activated === true)?.map((badge) => badge.imageUrl) ?? [],
-      )
-      .filter((badge) => badge != null);
+    const badges = [subscriptionBadge, ...(profile.viewerBadges?.map(({ badge }) => badge.imageUrl) ?? [])].filter(
+      (badge) => badge != null,
+    );
     const color =
       profile.title?.color ??
       nicknameColors[

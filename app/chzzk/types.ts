@@ -70,6 +70,15 @@ export interface Badge {
   activated?: boolean;
 }
 
+export interface ViewerBadge {
+  type: string;
+  badge: {
+    badgeId?: string;
+    scope: string;
+    imageUrl: string;
+  };
+}
+
 export interface RealTimeDonationRanking {
   badge: Badge;
 }
@@ -83,6 +92,7 @@ export interface Subscription {
 export interface StreamingProperty {
   realTimeDonationRanking?: RealTimeDonationRanking;
   subscription?: Subscription;
+  activatedAchievementBadgeIds: string[];
 }
 
 export interface Title {
@@ -100,6 +110,7 @@ export interface Profile {
   verifiedMark: boolean;
   activityBadges: Badge[];
   streamingProperty: StreamingProperty;
+  viewerBadges: ViewerBadge[];
 }
 
 export interface WeeklyRank {
