@@ -1,41 +1,178 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped
-with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Chazzy
 
-## Getting Started
+Multi-platform streaming chat overlay that aggregates real-time chat from Chzzk (치지직), Twitch, and AfreecaTV/Soop (숲).
 
-First, run the development server:
+## Features
+
+- **Multi-Platform Support**: Display chat from 3 streaming platforms simultaneously
+- **Real-Time WebSocket**: Low-latency chat updates with smart batching
+- **Paid Chat Highlighting**: Special display for donations (Chzzk Cheese, Twitch Bits)
+- **Platform Badges**: Shows subscription tiers, moderator status, and achievements
+- **Responsive Design**: Optimized for OBS Browser Source and mobile viewing
+- **Auto-Reconnect**: Handles connection drops with exponential backoff
+
+## Supported Platforms
+
+| Platform | Protocol | Features |
+|----------|----------|----------|
+| **Chzzk** (치지직) | JSON over WebSocket | Cheese donations, subscription badges, emoji parsing |
+| **Twitch** | IRC over WebSocket | Bits, global/broadcaster badges, emote positioning |
+| **AfreecaTV/Soop** (숲) | Binary WebSocket | Stickers, fan club badges, manager status |
+
+## Quick Start
+
+### Development
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
+# Install dependencies
+pnpm install
+
+# Run development server
 pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) to see the landing page.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Using the Overlay
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and
-load Inter, a custom Google Font.
+Access the chat overlay via: `http://localhost:3000/{channelId}`
 
-## Learn More
+**URL Format**: `/{chzzkId}-{twitchId}-{afreecatvId}`
 
-To learn more about Next.js, take a look at the following resources:
+Examples:
+```
+# Single platform
+http://localhost:3000/chzzkChannelId--
+http://localhost:3000/-twitchUsername-
+http://localhost:3000/--afreecatvId
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+# Multiple platforms
+http://localhost:3000/chzzkId-twitchName-
+http://localhost:3000/chzzkId--afreecatvId
+http://localhost:3000/chzzkId-twitchName-afreecatvId
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions
-are welcome!
+### Environment Variables
 
-## Deploy on Vercel
+For Twitch integration, create `.env.local`:
 
-The easiest way to deploy your Next.js app is to use
-the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme)
-from the creators of Next.js.
+```env
+NEXT_PUBLIC_TWITCH_CLIENT_ID=your_client_id
+NEXT_PUBLIC_TWITCH_ACCESS_TOKEN=your_access_token
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+## OBS Setup
+
+1. Add **Browser Source** in OBS
+2. Set URL to: `https://your-deployment-url.com/{channelId}`
+3. Recommended dimensions: 1920x1080
+4. Enable "Shutdown source when not visible" for better performance
+5. Check "Refresh browser when scene becomes active"
+
+## Project Structure
+
+```
+app/
+├── [channelId]/          # Dynamic overlay route
+│   ├── Chazzy.tsx        # Main component
+│   ├── ChatRow.tsx       # Regular chat display
+│   └── CheeseChatRow.tsx # Paid chat display
+├── chat/                 # Unified chat abstraction
+│   ├── types.ts          # Common Chat interface
+│   └── useMergedList.ts  # Multi-platform chat merger
+├── chzzk/                # Chzzk platform integration
+├── twitch/               # Twitch platform integration
+└── afreecatv/            # AfreecaTV/Soop integration
+```
+
+## Development
+
+### Build Commands
+
+```bash
+# Development server
+pnpm dev
+
+# Production build
+pnpm build
+
+# Start production server
+pnpm start
+
+# Lint code
+pnpm lint
+```
+
+### Tech Stack
+
+- **Framework**: Next.js 14 (App Router)
+- **Runtime**: React 18 with Hooks
+- **Language**: TypeScript 5
+- **Styling**: CSS with CSS Variables
+- **Real-Time**: WebSocket connections per platform
+- **UI**: @floating-ui/react for menu positioning
+- **Monitoring**: Sentry error tracking
+
+## Architecture
+
+### Message Processing Pipeline
+
+```
+Platform WebSocket → Parser → Unified Chat Type
+    ↓
+Pending List (useRef) → Smart Batching (useMergedList)
+    ↓
+React State → Memoized Components → UI
+```
+
+### Smart Batching
+
+The `useMergedList` hook optimizes performance:
+- **Fast messages**: Exponential batching (2→4→8→16 per cycle)
+- **Slow messages**: Release all pending messages at once (>1s gap)
+- **Sorting**: Maintains chronological order across platforms
+- **Capping**: Max 1000 regular chats, 10 paid chats
+
+### Performance Optimizations
+
+- Component memoization with `React.memo()`
+- Web Worker for WebSocket ping timers
+- Document hidden detection (pauses when tab inactive)
+- Ref-based pending lists (avoids re-renders during accumulation)
+- `reactStrictMode: false` to prevent double WebSocket connections
+
+## Platform Details
+
+### Chzzk (치지직)
+- WebSocket: `wss://kr-ss1.chat.naver.com/chat`
+- Requires access token from Chzzk API
+- Cheese tiers: 0 (gray), 1 (purple), 2 (green), 3 (gold), 4 (red)
+- Live status polling every 30 seconds
+
+### Twitch
+- WebSocket: `wss://irc-ws.chat.twitch.tv`
+- IRC protocol with tags parsing
+- Badge fetching from Twitch API
+- Requires Client ID and Access Token
+
+### AfreecaTV/Soop
+- Custom binary protocol with `%SF` start and `%EC` end delimiters
+- Bitwise flag parsing for message properties
+- Station metadata polling every 30 seconds
+- SVG badge icons in `public/afreecatv/`
+
+## API Proxying
+
+Uses `aioo.ooo` proxy to bypass CORS:
+- Chzzk: `https://api.chzzk.naver.com.proxy.aioo.ooo`
+- AfreecaTV: `https://live.sooplive.co.kr.proxy.aioo.ooo`
+
+## Contributing
+
+See [CLAUDE.md](./CLAUDE.md) for detailed architecture documentation and development patterns.
+
+## Deployment
+
+Remember to set environment variables for Twitch integration in your deployment settings:
+- `NEXT_PUBLIC_TWITCH_CLIENT_ID`
+- `NEXT_PUBLIC_TWITCH_ACCESS_TOKEN`
