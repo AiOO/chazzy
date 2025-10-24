@@ -42,9 +42,14 @@ interface ClearTwitchMessageMethod {
   uid: string;
 }
 
+interface ClearYoutubeMessageMethod {
+  type: 'youtube';
+  messageId: string;
+}
+
 interface ClearSpecificMessage {
   type: 'message';
-  method: ClearByChzzkMessageMethod | ClearTwitchMessageMethod;
+  method: ClearByChzzkMessageMethod | ClearTwitchMessageMethod | ClearYoutubeMessageMethod;
 }
 
 interface ClearUserMessages {

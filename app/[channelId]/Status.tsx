@@ -1,6 +1,6 @@
 import { memo, ReactElement, useMemo } from 'react';
 
-type Provider = 'chzzk' | 'twitch' | 'afreecatv';
+type Provider = 'chzzk' | 'twitch' | 'afreecatv' | 'youtube';
 
 interface Props {
   provider: Provider;
@@ -22,6 +22,8 @@ function Status(props: Props): ReactElement {
         return '#bf94ff,#772ce8';
       case 'afreecatv':
         return '#6694ff,#2266ff';
+      case 'youtube':
+        return '#ff0000,#cc0000';
     }
   }, [provider]);
 

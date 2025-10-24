@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Chazzy is a real-time chat aggregation overlay for multi-platform streamers. It displays unified chat from three Korean and Western streaming platforms simultaneously: Chzzk (Naver), Twitch, and AfreecaTV/Soop.
+Chazzy is a real-time chat aggregation overlay for multi-platform streamers. It displays unified chat from four Korean and Western streaming platforms simultaneously: Chzzk (Naver), Twitch, AfreecaTV/Soop, and YouTube.
 
 ## Development Commands
 
@@ -26,23 +26,23 @@ pnpm run lint
 
 Access the overlay via dynamic route: `http://localhost:3000/{channelId}`
 
-**URL Pattern**: `/{chzzkId}-{twitchId}-{afreecatvId}`
+**URL Pattern**: `/{chzzkId}-{twitchId}-{afreecatvId}-{youtubeVideoId}`
 
 Examples:
-- Single platform: `chzzkChannelId--` or `-twitchUsername-` or `--afreecatvId`
-- Multi-platform: `chzzkId-twitchName-afreecatvId`
+- Single platform: `chzzkChannelId---` or `-twitchUsername--` or `--afreecatvId-` or `---youtubeVideoId`
+- Multi-platform: `chzzkId-twitchName-afreecatvId-youtubeVideoId`
 - Any combination works (IDs are flexible, use `-` to omit platforms)
 
 ## Architecture Overview
 
 ### Platform Abstraction Layer
 
-Each platform module (`app/chzzk/`, `app/twitch/`, `app/afreecatv/`) is self-contained with:
+Each platform module (`app/chzzk/`, `app/twitch/`, `app/afreecatv/`, `app/youtube/`) is self-contained with:
 - **types.ts**: Platform-specific message/user types
-- **constants.ts**: Nickname colors, badge definitions
-- **useChatList.ts**: WebSocket connection + message parsing
-- **useChannel.ts / useUser.ts / useStation.ts**: Metadata fetching
-- **parser/** (if needed): Protocol parsing logic
+- **constants.ts**: Nickname colors, badge definitions, Super Chat/Cheese tier colors
+- **useChatList.ts**: Real-time connection (WebSocket or SSE) + message parsing
+- **useChannel.ts / useUser.ts / useStation.ts / useVideoInfo.ts**: Metadata fetching
+- **parser/** (if needed): Protocol parsing logic (Twitch IRC, AfreecaTV binary)
 
 All platforms convert their native message types to the unified `Chat` interface defined in `app/chat/types.ts`.
 
@@ -110,6 +110,41 @@ React State → Memoized Components → UI Rendering
 - **Badges**: SVG icons in `public/afreecatv/` (manager, hot, fanclub, gudok tiers)
 - **Polling**: Station metadata updates every 30 seconds
 
+### YouTube
+- **Protocol**: InnerTube API (unofficial) via direct client-side connection
+- **Library**: `youtubei.js` (v10.0.0+) - JavaScript client for YouTube's private InnerTube API
+- **API Proxy**: Custom proxy at `innertube.proxy.aioo.ooo` to bypass CORS restrictions
+- **Authentication**: No API key required (uses unofficial InnerTube API)
+- **Message Types**: Regular chat, Super Chat, Super Sticker, membership events (currently only text messages implemented)
+- **Badges**: Custom thumbnails from author badges via InnerTube API
+- **Live Status**: Video info fetched every 30 seconds via `useVideoInfo.ts`
+- **Streaming**: Real-time event-driven connection with automatic reconnection
+- **Viewer Count**: Real-time viewer count via `metadata-update` event from LiveChat
+  - Accessed through `livechat.on('metadata-update', (metadata) => metadata.views.original_view_count)`
+  - Updates reflected in Status component in real-time
+
+**Architecture**:
+- **useInnertube.ts**: Initializes Innertube client with custom fetch proxy
+- **useLiveChat.ts**: Manages LiveChat connection lifecycle and event listeners
+- **useChatList.ts**: Converts YouTube chat format to unified Chat type
+- **useVideoInfo.ts**: Polls video metadata every 30 seconds
+
+**Important Notes**:
+- YouTube integration uses **unofficial InnerTube API** which may break without notice
+- No quota limitations compared to official YouTube Data API v3
+- Client-side implementation with proxy bypass (no Next.js API routes needed)
+- Requires video ID (not channel ID) since chat is per-livestream
+- Must call `livechat.start()` before events are emitted
+- `metadata-update` events provide real-time viewer count (not cumulative view count)
+
+**Critical Implementation Details**:
+- LiveChat instance created via `innertube.getInfo(videoId).getLiveChat()`
+- Event-driven architecture: `chat-update` and `metadata-update` events
+- Emoji rendering via `emoji_id` and image URLs from message runs
+- Color assignment based on author ID hash (deterministic coloring)
+- Cleanup on unmount: `liveChat.stop()` and event listener removal
+- Only `LiveChatTextMessage` type is currently processed
+
 ## Key Technical Patterns
 
 ### WebSocket Ping Management
@@ -124,6 +159,7 @@ Auto-reconnection logic with exponential backoff on disconnect.
 Custom proxy endpoints at `aioo.ooo` to bypass CORS restrictions:
 - Chzzk API: `https://api.chzzk.naver.com.proxy.aioo.ooo`
 - AfreecaTV API: `https://live.sooplive.co.kr.proxy.aioo.ooo`
+- YouTube InnerTube API: `https://innertube.proxy.aioo.ooo`
 
 ### Performance Optimizations
 1. **Component Memoization**: All rendering components use `React.memo()`

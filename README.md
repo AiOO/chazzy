@@ -1,13 +1,14 @@
 # Chazzy
 
-Multi-platform streaming chat overlay that aggregates real-time chat from Chzzk (치지직), Twitch, and AfreecaTV/Soop (숲).
+Multi-platform streaming chat overlay that aggregates real-time chat from Chzzk (치지직), Twitch, AfreecaTV/Soop (숲), and YouTube.
 
 ## Features
 
-- **Multi-Platform Support**: Display chat from 3 streaming platforms simultaneously
-- **Real-Time WebSocket**: Low-latency chat updates with smart batching
-- **Paid Chat Highlighting**: Special display for donations (Chzzk Cheese, Twitch Bits)
+- **Multi-Platform Support**: Display chat from 4 streaming platforms simultaneously
+- **Real-Time Updates**: Low-latency chat with WebSocket/SSE and smart batching
+- **Paid Chat Highlighting**: Special display for donations (Chzzk Cheese, YouTube Super Chat, Twitch Bits)
 - **Platform Badges**: Shows subscription tiers, moderator status, and achievements
+- **Real-Time Viewer Count**: Live viewer count updates for all platforms
 - **Responsive Design**: Optimized for OBS Browser Source and mobile viewing
 - **Auto-Reconnect**: Handles connection drops with exponential backoff
 
@@ -18,6 +19,7 @@ Multi-platform streaming chat overlay that aggregates real-time chat from Chzzk 
 | **Chzzk** (치지직) | JSON over WebSocket | Cheese donations, subscription badges, emoji parsing |
 | **Twitch** | IRC over WebSocket | Bits, global/broadcaster badges, emote positioning |
 | **AfreecaTV/Soop** (숲) | Binary WebSocket | Stickers, fan club badges, manager status |
+| **YouTube** | InnerTube API (SSE) | Super Chat/Stickers, membership badges, real-time viewer count |
 
 ## Quick Start
 
@@ -37,20 +39,24 @@ Open [http://localhost:3000](http://localhost:3000) to see the landing page.
 
 Access the chat overlay via: `http://localhost:3000/{channelId}`
 
-**URL Format**: `/{chzzkId}-{twitchId}-{afreecatvId}`
+**URL Format**: `/{chzzkId}-{twitchId}-{afreecatvId}-{youtubeVideoId}`
 
 Examples:
 ```
 # Single platform
-http://localhost:3000/chzzkChannelId--
-http://localhost:3000/-twitchUsername-
-http://localhost:3000/--afreecatvId
+http://localhost:3000/chzzkChannelId---
+http://localhost:3000/-twitchUsername--
+http://localhost:3000/--afreecatvId-
+http://localhost:3000/---youtubeVideoId
 
 # Multiple platforms
-http://localhost:3000/chzzkId-twitchName-
-http://localhost:3000/chzzkId--afreecatvId
-http://localhost:3000/chzzkId-twitchName-afreecatvId
+http://localhost:3000/chzzkId-twitchName--
+http://localhost:3000/chzzkId--afreecatvId-
+http://localhost:3000/---youtubeVideoId
+http://localhost:3000/chzzkId-twitchName-afreecatvId-youtubeVideoId
 ```
+
+**Note**: YouTube requires a **video ID** (from the live stream URL), not a channel ID.
 
 ### Environment Variables
 
@@ -82,7 +88,8 @@ app/
 │   └── useMergedList.ts  # Multi-platform chat merger
 ├── chzzk/                # Chzzk platform integration
 ├── twitch/               # Twitch platform integration
-└── afreecatv/            # AfreecaTV/Soop integration
+├── afreecatv/            # AfreecaTV/Soop integration
+└── youtube/              # YouTube platform integration
 ```
 
 ## Development
@@ -161,11 +168,20 @@ The `useMergedList` hook optimizes performance:
 - Station metadata polling every 30 seconds
 - SVG badge icons in `public/afreecatv/`
 
+### YouTube
+- Client-side InnerTube API connection via `youtubei.js` library
+- No API key required (bypasses official YouTube Data API quota)
+- Custom proxy at `innertube.proxy.aioo.ooo` to bypass CORS
+- Event-driven architecture with `chat-update` and `metadata-update` listeners
+- Real-time viewer count via `metadata-update` events
+- Video metadata polling every 30 seconds
+
 ## API Proxying
 
 Uses `aioo.ooo` proxy to bypass CORS:
 - Chzzk: `https://api.chzzk.naver.com.proxy.aioo.ooo`
 - AfreecaTV: `https://live.sooplive.co.kr.proxy.aioo.ooo`
+- YouTube InnerTube: `https://innertube.proxy.aioo.ooo`
 
 ## Contributing
 

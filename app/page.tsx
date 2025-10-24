@@ -3,15 +3,16 @@ export default function Home() {
     <main style={{ color: 'black', paddingLeft: '1rem', paddingRight: '1rem' }}>
       <h1>Chazzy</h1>
       <p>
-        스트리머의 치지직, 트위치, 숲(구 아프리카TV) ID를 조합하여 다음과 같은 주소를 만들어 웹 브라우저로 접속합니다.
+        스트리머의 치지직, 트위치, 숲(구 아프리카TV), 유튜브 라이브 영상 ID를 조합하여 다음과 같은 주소를 만들어 웹
+        브라우저로 접속합니다.
         <br />
         각각의 ID는 생략할 수 있으며, 생략한 경우 해당 플랫폼의 채팅 및 기능은 노출되지 않습니다.
       </p>
       <p>
-        https://chazzy.vercel.app/{'{치지직 ID}'}-{'{트위치 ID}'}-{'{숲 ID}'}
+        https://chazzy.vercel.app/{'{치지직 ID}'}-{'{트위치 ID}'}-{'{숲 ID}'}-{'{유튜브 라이브 영상 ID}'}
       </p>
       <h2>사용 방법 상세 안내</h2>
-      <p>(예시 주소는 각각 치지직, 트위치, 숲의 공식 계정입니다.)</p>
+      <p>(예시 주소는 각각 치지직, 트위치, 숲의 공식 계정과 유튜브 공식 채널의 영상입니다.)</p>
       <p>
         만약 스트리머의 치지직 주소가 다음과 같고:
         <br />
@@ -23,14 +24,19 @@ export default function Home() {
         https://www.twitch.tv/twitch
       </p>
       <p>
-        스트리머의 숲 주소가 다음과 같다면:
+        스트리머의 숲 주소가 다음과 같고:
         <br />
         https://ch.sooplive.co.kr/afreecapd
       </p>
       <p>
+        스트리머의 유튜브 라이브 영상 주소가 다음과 같다면:
+        <br />
+        https://www.youtube.com/watch?v=rdwz7QiG0lk
+      </p>
+      <p>
         → Chazzy 주소는 다음과 같습니다:
         <br />
-        https://chazzy.vercel.app/c42cd75ec4855a9edf204a407c3c1dd2-twitch-afreecapd
+        https://chazzy.vercel.app/c42cd75ec4855a9edf204a407c3c1dd2-twitch-afreecapd-rdwz7QiG0lk
       </p>
       <h3>원하는 플랫폼만 사용하기</h3>
       <p>
@@ -40,17 +46,22 @@ export default function Home() {
       <p>
         → 치지직과 트위치만 사용 시 Chazzy 주소:
         <br />
-        https://chazzy.vercel.app/c42cd75ec4855a9edf204a407c3c1dd2-twitch-
+        https://chazzy.vercel.app/c42cd75ec4855a9edf204a407c3c1dd2-twitch--
       </p>
       <p>
         → 트위치와 숲만 사용 시 Chazzy 주소:
         <br />
-        https://chazzy.vercel.app/-twitch-afreecapd
+        https://chazzy.vercel.app/-twitch-afreecapd-
       </p>
       <p>
         → 치지직만 사용 시 Chazzy 주소:
         <br />
-        https://chazzy.vercel.app/c42cd75ec4855a9edf204a407c3c1dd2--
+        https://chazzy.vercel.app/c42cd75ec4855a9edf204a407c3c1dd2---
+      </p>
+      <p>
+        → 유튜브만 사용 시 Chazzy 주소:
+        <br />
+        https://chazzy.vercel.app/---rdwz7QiG0lk
       </p>
       <hr />
       <p>

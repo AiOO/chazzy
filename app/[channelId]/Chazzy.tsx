@@ -12,6 +12,8 @@ import useLiveStatus from '../chzzk/useLiveStatus';
 import useTwitchChatList from '../twitch/useChatList';
 import useTwitchUser from '../twitch/useUser';
 import useStream from '../twitch/useStream';
+import useYoutubeChatList from '../youtube/useChatList';
+import useYoutubeVideoInfo from '../youtube/useVideoInfo';
 import ChatRow from './ChatRow';
 import ChazzyMenu from './ChazzyMenu';
 import CheeseChatRow from './CheeseChatRow';
@@ -23,10 +25,11 @@ export interface ChazzyProps {
   afreecatvChannelId: string | undefined;
   chzzkChannelId: string | undefined;
   twitchChannelId: string | undefined;
+  youtubeVideoId: string | undefined;
 }
 
 export default function Chazzy(props: ChazzyProps): ReactElement {
-  const { afreecatvChannelId, chzzkChannelId, twitchChannelId } = props;
+  const { afreecatvChannelId, chzzkChannelId, twitchChannelId, youtubeVideoId } = props;
 
   const isChatAutoScrollEnabledRef = useRef<boolean>(true);
   const chatScrollRef = useRef<HTMLDivElement>(null);
@@ -45,6 +48,8 @@ export default function Chazzy(props: ChazzyProps): ReactElement {
     afreecatvChannelId,
     afreecatvStation?.broad != null ? `${afreecatvStation?.broad.broad_no}` : undefined,
   );
+
+  const { videoInfo: youtubeVideoInfo } = useYoutubeVideoInfo(youtubeVideoId);
 
   const handleClearChzzkMessage = useCallback((clearMessage: ClearMessage) => {
     setChatList((prevChatList) => {
@@ -129,13 +134,21 @@ export default function Chazzy(props: ChazzyProps): ReactElement {
     twitchUser?.id,
     handleClearTwitchMessage,
   );
+  const {
+    pendingChatListRef: pendingYoutubeChatListRef,
+    pendingCheeseChatListRef: pendingYoutubeSuperChatListRef,
+    viewerCount: youtubeViewerCount,
+  } = useYoutubeChatList(youtubeVideoId);
 
   const pendingChatListRefs = useMemo(
-    () => [pendingAfreecatvChatListRef, pendingChzzkChatListRef, pendingTwitchChatListRef],
-    [pendingAfreecatvChatListRef, pendingChzzkChatListRef, pendingTwitchChatListRef],
+    () => [pendingAfreecatvChatListRef, pendingChzzkChatListRef, pendingTwitchChatListRef, pendingYoutubeChatListRef],
+    [pendingAfreecatvChatListRef, pendingChzzkChatListRef, pendingTwitchChatListRef, pendingYoutubeChatListRef],
   );
 
-  const pendingCheeseChatListRefs = useMemo(() => [pendingCheeseChatListRef], [pendingCheeseChatListRef]);
+  const pendingCheeseChatListRefs = useMemo(
+    () => [pendingCheeseChatListRef, pendingYoutubeSuperChatListRef],
+    [pendingCheeseChatListRef, pendingYoutubeSuperChatListRef],
+  );
 
   const { list: chatList, setList: setChatList } = useMergedList({
     pendingListRefs: pendingChatListRefs,
@@ -260,6 +273,19 @@ export default function Chazzy(props: ChazzyProps): ReactElement {
               concurrentUserCount={afreecatvStation.broad?.current_sum_viewer}
               liveCategoryValue={afreecatvStation.broad?.broad_title}
               isLive={afreecatvStation.broad != null}
+            />
+            <div className="divider" />
+          </>
+        )}
+        {youtubeVideoId != null && youtubeVideoInfo != null && (
+          <>
+            <Status
+              provider="youtube"
+              channelName={youtubeVideoInfo.channelName}
+              channelImageUrl={youtubeVideoInfo.thumbnailUrl}
+              concurrentUserCount={youtubeViewerCount ?? youtubeVideoInfo.viewerCount}
+              liveCategoryValue={youtubeVideoInfo.title}
+              isLive={youtubeVideoInfo.isLive}
             />
             <div className="divider" />
           </>
